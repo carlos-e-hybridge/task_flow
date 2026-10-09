@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Editar tarea' if tarea else 'Nueva tarea' }}{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('index') }}">Mis tareas</a><span class="crumb-slash">/</span>{{ 'Editar tarea' if tarea else 'Nueva tarea' }}{% endblock %}
+
+{% block content %}
+<section class="page-content form-page">
+    <div class="page-heading form-heading">
+        <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> {{ 'AJUSTA LOS DETALLES' if tarea else 'EMPIEZA EN PEQUEÑO' }}</div>
+            <h1>{{ 'Editar' if tarea else 'Nueva' }} <span>tarea.</span></h1>
+            <p class="page-subtitle">{{ 'Actualiza los detalles o muévela a otro proyecto.' if tarea else 'Ponle nombre al siguiente paso. Lo demás viene después.' }}</p>
+        </div>
+        <div class="form-index"><span>01</span><i></i> NUEVO PENDIENTE</div>
+    </div>
+
+    <div class="form-layout">
+        <form class="task-form" method="post" action="{{ url_for('editar_tarea_web', tarea_id=tarea.id) if tarea else url_for('crear_tarea_web') }}">
+            {% if return_project_id is defined and return_project_id is not none %}<input type="hidden" name="return_project_id" value="{{ return_project_id }}">{% endif %}
+            <label class="field-label" for="titulo">¿Qué necesitas hacer?<span class="required-mark">*</span></label>
+            <input class="text-input title-input" id="titulo" name="titulo" type="text" maxlength="120" value="{{ tarea.titulo if tarea else '' }}" placeholder="Ej. Preparar presentación de proyecto" required autofocus>
+
+            <label class="field-label description-label" for="descripcion">Un poco más de contexto <span class="optional-mark">OPCIONAL</span></label>
+            <textarea class="text-input description-input" id="descripcion" name="descripcion" rows="4" placeholder="Añade detalles que te ayuden a retomarla...">{{ tarea.descripcion if tarea else '' }}</textarea>
+
+            <div class="field-grid">
+                <div class="field-group">
+                    <label class="field-label" for="fecha_limite">Fecha límite<span class="required-mark">*</span></label>
+                    <input class="text-input" id="fecha_limite" name="fecha_limite" type="date" value="{{ tarea.fecha_limite if tarea else '' }}" required>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="prioridad">Prioridad<span class="required-mark">*</span></label>
+                    <select class="text-input" id="prioridad" name="prioridad" required>
+                        <option value="Media" {% if not tarea or tarea.prioridad == 'Media' %}selected{% endif %}>Media</option>
+                        <option value="Alta" {% if tarea and tarea.prioridad == 'Alta' %}selected{% endif %}>Alta</option>
+                        <option value="Baja" {% if tarea and tarea.prioridad == 'Baja' %}selected{% endif %}>Baja</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field-group project-field">
+                <label class="field-label" for="proyecto_id">Proyecto<span class="required-mark">*</span></label>
+                <select class="text-input" id="proyecto_id" name="proyecto_id" required>
+                    {% for proyecto in proyectos %}
+                    <option value="{{ proyecto.id }}" {% if tarea and tarea.proyecto_id == proyecto.id %}selected{% endif %}>{{ proyecto.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <a class="button button-quiet" href="{{ url_for('index') }}">Cancelar</a>
+                <button class="button button-primary" type="submit">{{ 'Guardar cambios' if tarea else 'Crear tarea' }}</button>
+            </div>
+        </form>
+
+        <aside class="form-aside">
+            <div class="aside-mark" aria-hidden="true">✳</div>
+            <div class="aside-kicker">UN BUEN COMIENZO</div>
+            <p>Las tareas claras son más fáciles de empezar. Define el resultado, no cada movimiento.</p>
+            <div class="aside-rule"></div>
+            <div class="aside-foot"><span class="focus-pulse"></span> TU PRÓXIMO PASO CUENTA</div>
+        </aside>
+    </div>
+    <footer class="page-footer"><span>UN PASO A LA VEZ</span><span class="footer-dash"></span><span>VAS POR BUEN CAMINO</span></footer>
+</section>
+{% endblock %}

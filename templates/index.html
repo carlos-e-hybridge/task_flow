@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ proyecto_actual.nombre if proyecto_actual else 'Mis tareas' }}{% endblock %}
+{% block breadcrumb %}{{ proyecto_actual.nombre if proyecto_actual else 'Mis tareas' }}{% endblock %}
+
+{% block content %}
+<section class="page-content">
+    <div class="page-heading">
+        <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> {{ 'PROYECTO' if proyecto_actual else 'TU TABLERO PERSONAL' }}</div>
+            {% if proyecto_actual %}
+            <h1>{{ proyecto_actual.nombre }}<span>.</span></h1>
+            <p class="page-subtitle">{{ proyecto_actual.descripcion or 'Las tareas pendientes de este proyecto.' }}</p>
+            {% else %}
+            <h1>Haz que <span>pase.</span></h1>
+            <p class="page-subtitle">Ideas claras. Siguiente paso, siempre.</p>
+            {% endif %}
+        </div>
+        <div class="heading-actions">
+            {% if proyecto_actual %}
+            <a class="button button-quiet" href="{{ url_for('editar_proyecto_web', proyecto_id=proyecto_actual.id) }}">Editar proyecto</a>
+            {% if proyecto_actual.id != 0 %}
+            <form method="post" action="{{ url_for('eliminar_proyecto_web', proyecto_id=proyecto_actual.id) }}" onsubmit="return confirm('¿Eliminar este proyecto? Sus tareas se moverán a Tareas Generales.')">
+                <button class="button button-danger-quiet" type="submit">Eliminar proyecto</button>
+            </form>
+            {% endif %}
+            {% endif %}
+            <a class="button button-primary" href="{{ url_for('crear_tarea_web') }}"><span class="button-plus" aria-hidden="true">+</span> Nueva tarea</a>
+        </div>
+    </div>
+
+    <section class="overview-strip" aria-label="Resumen">
+        <div class="overview-item">
+            <span class="overview-label">POR HACER</span>
+            <span class="overview-value">{{ tareas|length }}<small> tareas</small></span>
+        </div>
+        <div class="overview-divider"></div>
+        <div class="overview-item">
+            <span class="overview-label">PROYECTOS</span>
+            <span class="overview-value">{{ proyectos|length }}<small> espacios</small></span>
+        </div>
+        <div class="overview-note"><span class="note-star" aria-hidden="true">✳</span> El progreso empieza con el primer paso.</div>
+    </section>
+
+    <div class="section-heading">
+        <div>
+            <div class="section-kicker">EN MARCHA</div>
+            <h2>{{ 'Tareas del proyecto' if proyecto_actual else 'Próximos pasos' }} <span class="section-count">{{ tareas|length }}</span></h2>
+        </div>
+        <span class="sort-label"><span class="sort-mark" aria-hidden="true">↓</span> Por fecha límite</span>
+    </div>
+
+    {% if tareas %}
+    {% include '_task_list.html' %}
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-symbol" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="empty-kicker">TODO EN CALMA</div>
+        <h3>{{ 'Este proyecto está despejado.' if proyecto_actual else 'Tu lista está despejada.' }}</h3>
+        <p>{{ 'Añade una tarea y aparecerá aquí.' if proyecto_actual else 'Guarda aquí tu siguiente idea y conviértela en acción.' }}</p>
+        <a class="button button-primary" href="{{ url_for('crear_tarea_web') }}"><span class="button-plus" aria-hidden="true">+</span> Crear primera tarea</a>
+    </div>
+    {% endif %}
+
+    <footer class="page-footer"><span>UN PASO A LA VEZ</span><span class="footer-dash"></span><span>VAS POR BUEN CAMINO</span></footer>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Editar proyecto' if proyecto else 'Crear proyecto' }}{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('index') }}">Mis tareas</a><span class="crumb-slash">/</span>{{ 'Editar proyecto' if proyecto else 'Crear proyecto' }}{% endblock %}
+
+{% block content %}
+<section class="page-content form-page">
+    <div class="page-heading form-heading">
+        <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> ORDENA TUS IDEAS</div>
+            <h1>{{ 'Editar' if proyecto else 'Nuevo' }} <span>proyecto.</span></h1>
+            <p class="page-subtitle">{{ 'Cambia el nombre o la descripción de este espacio.' if proyecto else 'Crea un espacio para reunir tareas relacionadas.' }}</p>
+        </div>
+        <div class="form-index"><span>01</span><i></i> {{ 'EDITAR ESPACIO' if proyecto else 'NUEVO ESPACIO' }}</div>
+    </div>
+
+    <div class="form-layout">
+        <form class="task-form" method="post" action="{{ url_for('editar_proyecto_web', proyecto_id=proyecto.id) if proyecto else url_for('crear_proyecto_web') }}">
+            <label class="field-label" for="nombre">Nombre del proyecto<span class="required-mark">*</span></label>
+            <input class="text-input title-input" id="nombre" name="nombre" type="text" maxlength="80" value="{{ proyecto.nombre if proyecto else '' }}" placeholder="Ej. Lanzamiento de producto" required autofocus>
+
+            <label class="field-label description-label" for="descripcion">Descripción <span class="optional-mark">OPCIONAL</span></label>
+            <textarea class="text-input description-input" id="descripcion" name="descripcion" rows="4" maxlength="300" placeholder="¿Qué quieres reunir en este proyecto?">{{ proyecto.descripcion if proyecto else '' }}</textarea>
+
+            <div class="form-actions">
+                <a class="button button-quiet" href="{{ url_for('ver_proyecto', proyecto_id=proyecto.id) if proyecto else url_for('index') }}">Cancelar</a>
+                <button class="button button-primary" type="submit">{{ 'Guardar cambios' if proyecto else 'Crear proyecto' }}</button>
+            </div>
+        </form>
+
+        <aside class="form-aside">
+            <div class="aside-mark" aria-hidden="true">✳</div>
+            <div class="aside-kicker">UN ESPACIO PROPIO</div>
+            <p>Reúne tareas relacionadas y vuelve a ellas desde la navegación de proyectos.</p>
+            <div class="aside-rule"></div>
+            <div class="aside-foot"><span class="focus-pulse"></span> TODO EN SU LUGAR</div>
+        </aside>
+    </div>
+    <footer class="page-footer"><span>UN PASO A LA VEZ</span><span class="footer-dash"></span><span>VAS POR BUEN CAMINO</span></footer>
+</section>
+{% endblock %}

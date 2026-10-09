@@ -1,0 +1,27 @@
+<div class="task-list">
+    {% for tarea in tareas %}
+    <article class="task-row" style="--row-index: {{ loop.index0 }}">
+        <div class="task-check" aria-hidden="true"><span></span></div>
+        <div class="task-main">
+            <h3>{{ tarea.titulo }}</h3>
+            {% if tarea.descripcion %}<p>{{ tarea.descripcion }}</p>{% endif %}
+            <div class="task-meta">
+                <span class="project-tag"><span class="project-dot dot-{{ loop.index0 % 4 }}"></span>{{ tarea.proyecto_nombre }}</span>
+                <span class="meta-separator"></span>
+                <span class="priority priority-{{ tarea.prioridad|lower }}">{{ tarea.prioridad }}</span>
+            </div>
+        </div>
+        <div class="task-due">
+            <span class="due-label">FECHA LÍMITE</span>
+            <time>{{ tarea.fecha_limite or 'Sin fecha' }}</time>
+        </div>
+        <div class="task-actions">
+            <a class="task-action" href="{{ url_for('editar_tarea_web', tarea_id=tarea.id, proyecto_id=proyecto_actual.id if proyecto_actual else none) }}">Editar</a>
+            <form method="post" action="{{ url_for('eliminar_tarea_web', tarea_id=tarea.id) }}" onsubmit="return confirm('¿Eliminar esta tarea? Esta acción no se puede deshacer.')">
+                {% if proyecto_actual %}<input type="hidden" name="return_project_id" value="{{ proyecto_actual.id }}">{% endif %}
+                <button class="task-action task-action-danger" type="submit">Eliminar</button>
+            </form>
+        </div>
+    </article>
+    {% endfor %}
+</div>

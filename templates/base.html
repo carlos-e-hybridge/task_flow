@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#11110f">
+    <title>{% block title %}Taskflow{% endblock %} | Taskflow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="{{ url_for('index') }}" aria-label="Taskflow, inicio">
+                <span class="brand-mark"><span></span><span></span><span></span></span>
+                <span>task<span class="brand-light">flow</span></span>
+            </a>
+
+            <div class="sidebar-caption">ESPACIO DE TRABAJO</div>
+            <nav class="main-nav" aria-label="Navegación principal">
+                <a class="nav-link {% if request.endpoint == 'index' %}is-active{% endif %}" href="{{ url_for('index') }}">
+                    <span class="nav-icon nav-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                    <span>Mis tareas</span>
+                    {% if tareas is defined %}<span class="nav-count">{{ tareas|length }}</span>{% endif %}
+                </a>
+                <a class="nav-link {% if request.endpoint == 'crear_tarea_web' %}is-active{% endif %}" href="{{ url_for('crear_tarea_web') }}">
+                    <span class="nav-icon nav-plus" aria-hidden="true">+</span>
+                    <span>Nueva tarea</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-caption project-caption">PROYECTOS <span>{{ proyectos|length if proyectos is defined else 0 }}</span></div>
+            <div class="project-list">
+                {% if proyectos is defined and proyectos %}
+                    {% for proyecto in proyectos %}
+                    <a class="project-link {% if proyecto_actual and proyecto_actual.id == proyecto.id %}is-current{% endif %}" href="{{ url_for('ver_proyecto', proyecto_id=proyecto.id) }}">
+                        <span class="project-dot dot-{{ loop.index0 % 4 }}"></span>
+                        <span class="project-name">{{ proyecto.nombre }}</span>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="project-empty">Aún no hay proyectos</div>
+                {% endif %}
+                <a class="project-add" href="{{ url_for('crear_proyecto_web') }}"><span aria-hidden="true">+</span> Crear proyecto</a>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="focus-label"><span class="focus-pulse"></span> MODO ENFOQUE</div>
+                <div class="focus-copy">Una cosa a la vez.<br><span>El progreso se acumula.</span></div>
+                <div class="sidebar-version">TASKFLOW <span>·</span> TU ESPACIO, TU RITMO</div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong>{% block breadcrumb %}Tareas{% endblock %}</strong></div>
+                <a class="topbar-action" href="{{ url_for('crear_tarea_web') }}"><span aria-hidden="true">+</span> Crear tarea</a>
+            </header>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
